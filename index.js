@@ -79,6 +79,11 @@ app.get("/check-status", async (req, res) => {
       res.status(500).send("Error getting status");
     }
   });
+
+  app.get("/", (req, res) => {
+    res.send("PhonePe Payment Gateway Backend is running.");
+  });
+  
   
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
