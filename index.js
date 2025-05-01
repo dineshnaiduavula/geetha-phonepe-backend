@@ -50,6 +50,7 @@ app.post("/create-order", async (req, res) => {
 
     return res.json({
       checkoutPageUrl: response.redirectUrl,
+      merchantOrderId,
       success: true,
     });
   } catch (error) {
@@ -59,32 +60,31 @@ app.post("/create-order", async (req, res) => {
 });
 
 app.get("/check-status", async (req, res) => {
-    try {
-      const { merchantOrderId } = req.query;
-  
-      if (!merchantOrderId) {
-        return res.status(400).send("MerchantOrderId is required");
-      }
-  
-      const response = await client.getOrderStatus(merchantOrderId);
-      const status = response.state;
-  
-      if (status === "COMPLETED") {
-        return res.redirect("https://theater-food.life/order-confirmation");
-      } else {
-        return res.redirect("https://theater-food.life/menu");
-      }
-    } catch (error) {
-      console.error("Error getting status:", error);
-      res.status(500).send("Error getting status");
-    }
-  });
+  try {
+    const { merchantOrderId } = req.query;
 
-  app.get("/", (req, res) => {
-    res.send("PhonePe Payment Gateway Backend is running.");
-  });
-  
-  
+    if (!merchantOrderId) {
+      return res.status(400).send("MerchantOrderId is required");
+    }
+
+    const response = await client.getOrderStatus(merchantOrderId);
+    const status = response.state;
+
+    if (status === "COMPLETED") {
+      return res.redirect("https://theater-food.life/order-confirmation");
+    } else {
+      return res.redirect("https://theater-food.life/menu");
+    }
+  } catch (error) {
+    console.error("Error getting status:", error);
+    res.status(500).send("Error getting status");
+  }
+});
+
+app.get("/", (req, res) => {
+  res.send("PhonePe Payment Gateway Backend is running.");
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });
