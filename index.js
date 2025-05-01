@@ -48,11 +48,20 @@ app.post("/create-order", async (req, res) => {
 
     const response = await client.pay(request);
 
-    return res.json({
-      checkoutPageUrl: response.redirectUrl,
-      merchantOrderId,
-      success: true,
-    });
+    if (response) {
+      const checkorde = await client.getOrderStatus(merchantOrderId);
+      const status = checkorde.state;
+      if (status === "COMPLETED") {
+        // return res.redirect("https://theater-food.life/order-confirmation");
+        return res.json({
+          checkoutPageUrl: response.redirectUrl,
+          merchantOrderId,
+          success: true,
+        });
+      } else {
+        return res.redirect("https://theater-food.life/menu");
+      }
+    }
   } catch (error) {
     console.error("Error creating order:", error);
     res.status(500).json({ message: "Error creating order", success: false });
@@ -70,11 +79,12 @@ app.get("/check-status", async (req, res) => {
     const response = await client.getOrderStatus(merchantOrderId);
     const status = response.state;
 
-    if (status === "COMPLETED") {
-      return res.redirect("https://theater-food.life/order-confirmation");
-    } else {
-      return res.redirect("https://theater-food.life/menu");
-    }
+    // if (status === "COMPLETED") {
+    //   return res.redirect("https://theater-food.life/order-confirmation");
+    // } else {
+    //   return res.redirect("https://theater-food.life/menu");
+    // }
+    return status;
   } catch (error) {
     console.error("Error getting status:", error);
     res.status(500).send("Error getting status");
