@@ -52,7 +52,6 @@ app.post("/create-order", async (req, res) => {
       const checkorde = await client.getOrderStatus(merchantOrderId);
       const status = checkorde.state;
       if (status === "COMPLETED") {
-        // return res.redirect("https://theater-food.life/order-confirmation");
         return res.json({
           checkoutPageUrl: response.redirectUrl,
           merchantOrderId,
@@ -77,14 +76,7 @@ app.get("/check-status", async (req, res) => {
     }
 
     const response = await client.getOrderStatus(merchantOrderId);
-    const status = response.state;
-
-    // if (status === "COMPLETED") {
-    //   return res.redirect("https://theater-food.life/order-confirmation");
-    // } else {
-    //   return res.redirect("https://theater-food.life/menu");
-    // }
-    return status;
+    return res.json({ status: response.state }); // e.g., "COMPLETED", "FAILED"
   } catch (error) {
     console.error("Error getting status:", error);
     res.status(500).send("Error getting status");
