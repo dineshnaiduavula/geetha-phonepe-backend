@@ -38,7 +38,7 @@ app.post("/create-order", async (req, res) => {
     }
     const finalamount = data.amount * 100;
     const merchantOrderId = randomUUID();
-    const redirectUrl = `https://theater-food.life/check-status?merchantOrderId=${merchantOrderId}`;
+    const redirectUrl = `https://theater-food.life/order-confirmation?merchantOrderId=${merchantOrderId}`;
 
     const request = StandardCheckoutPayRequest.builder()
       .merchantOrderId(merchantOrderId)
